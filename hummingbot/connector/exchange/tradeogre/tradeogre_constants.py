@@ -34,7 +34,7 @@ ORDER_BOOK_URL_LIMIT_ID = 'order_book'
 ACCOUNTS_PATH_URL = "/account"
 MY_TRADES_PATH_URL = "/myTrades"
 ORDER_PATH_URL = "/order"
-BINANCE_USER_STREAM_PATH_URL = "/userDataStream"
+TRADEOGRE_USER_STREAM_PATH_URL = "/userDataStream"
 
 WS_HEARTBEAT_TIME_INTERVAL = 30
 
@@ -99,7 +99,7 @@ RATE_LIMITS = [
     RateLimit(limit_id=SNAPSHOT_PATH_URL, limit=MAX_REQUEST, time_interval=ONE_MINUTE,
               linked_limits=[LinkedLimitWeightPair(REQUEST_WEIGHT, 100),
                              LinkedLimitWeightPair(RAW_REQUESTS, 1)]),
-    RateLimit(limit_id=BINANCE_USER_STREAM_PATH_URL, limit=MAX_REQUEST, time_interval=ONE_MINUTE,
+    RateLimit(limit_id=TRADEOGRE_USER_STREAM_PATH_URL, limit=MAX_REQUEST, time_interval=ONE_MINUTE,
               linked_limits=[LinkedLimitWeightPair(REQUEST_WEIGHT, 2),
                              LinkedLimitWeightPair(RAW_REQUESTS, 1)]),
     RateLimit(limit_id=SERVER_TIME_PATH_URL, limit=MAX_REQUEST, time_interval=ONE_MINUTE,
