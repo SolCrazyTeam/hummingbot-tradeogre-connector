@@ -18,7 +18,7 @@ class TradeogreAPIOrderBookDataSource(OrderBookTrackerDataSource):
         Return a dictionary the trading pair as key and the current price as value
         """
         result = {}
-        markets_response = await TradeogreWebUtils.api_request("GET", MARKETS_URL)
+        markets_response = await TradeogreWebUtils.api_request(MARKETS_URL)
         
         # Parse the response to extract prices for each trading pair
         for market_data in markets_response:
@@ -35,7 +35,6 @@ class TradeogreAPIOrderBookDataSource(OrderBookTrackerDataSource):
         # Implementation depends on TradeOgre's order book data structure
         # This is a placeholder example
         order_book_response = await TradeogreWebUtils.api_request(
-            "GET", 
             f"{ORDER_BOOK_URL}/{trading_pair}"
         )
         
@@ -47,7 +46,7 @@ class TradeogreAPIOrderBookDataSource(OrderBookTrackerDataSource):
         """
         Get all trading pairs from the exchange
         """
-        markets_response = await TradeogreWebUtils.api_request("GET", MARKETS_URL)
+        markets_response = await TradeogreWebUtils.api_request(MARKETS_URL)
         trading_pairs = []
         
         for market_data in markets_response:

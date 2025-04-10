@@ -1,12 +1,12 @@
 import pytest
 
 from hummingbot.connector.exchange.tradeogre.tradeogre_web_utils import TradeogreWebUtils
+from hummingbot.connector.exchange.tradeogre.tradeogre_constants import MARKETS_URL
 
 
 @pytest.mark.asyncio
 async def test_fetch_tradeogre_markets():
-    url = "/markets"
-    response = await TradeogreWebUtils.api_request.__func__(TradeogreWebUtils, "GET", url)
+    response = await TradeogreWebUtils.api_request(MARKETS_URL)
     assert isinstance(response, list)
     assert len(response) > 0
     first_market = response[0]

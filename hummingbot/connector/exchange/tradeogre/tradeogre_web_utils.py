@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class TradeogreWebUtils:
     @staticmethod
-    async def api_request(method: str, path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN, **kwargs):
+    async def api_request( path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN):
         """
         Sends an HTTP request to the TradeOgre API
         :param method: HTTP method (GET, POST, etc.)
@@ -31,9 +31,8 @@ class TradeogreWebUtils:
         
         response = await rest_assistant.execute_request(
             url=url,
-            method="GET",
-            throttler_limit_id=path_url,
-            **kwargs
+            method=RESTMethod.GET,
+            throttler_limit_id=path_url
         )
         
         return response

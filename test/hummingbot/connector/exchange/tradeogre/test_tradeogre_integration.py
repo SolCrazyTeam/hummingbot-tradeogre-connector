@@ -4,13 +4,9 @@ from logging import Logger, LogRecord
 
 from unittest import TestCase
 
-# from hummingbot.connector.exchange.tradeogre.tradeogre_constants import MARKETS_URL
-
+from hummingbot.connector.exchange.tradeogre.tradeogre_constants import MARKETS_URL
 from hummingbot.core.web_assistant.connections.data_types import RESTMethod, RESTRequest
 from hummingbot.connector.exchange.tradeogre import tradeogre_web_utils as WebUtils
-
-# from hummingbot.core.data_type.order_book_message import OrderBookMessageType
-
 
 class TradeogreOrderBookTests(TestCase):
 
@@ -23,11 +19,11 @@ class TradeogreOrderBookTests(TestCase):
         rest_assistant = await api_factory.get_rest_assistant()
         
         # Make the API request
-        markets_url = WebUtils.public_rest_url(path_url="/markets")
+        markets_url = WebUtils.public_rest_url(path_url=MARKETS_URL)
         markets_response = await rest_assistant.execute_request(
             url=markets_url,
             method=RESTMethod.GET,
-            throttler_limit_id="/markets"
+            throttler_limit_id=MARKETS_URL
         )
         
         print(markets_response)

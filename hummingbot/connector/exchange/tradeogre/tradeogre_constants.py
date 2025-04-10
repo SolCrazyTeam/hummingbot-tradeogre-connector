@@ -1,10 +1,3 @@
-from hummingbot.core.api_throttler.data_types import RateLimit, LinkedLimitWeightPair
-TRADEOGRE_RATE_LIMITS = [
-    RateLimit(limit_id="All", limit=5, time_interval=1),  # Max 5 requests per second globally
-]
-
-
-
 from hummingbot.core.api_throttler.data_types import LinkedLimitWeightPair, RateLimit
 from hummingbot.core.data_type.in_flight_order import OrderState
 
@@ -31,7 +24,11 @@ PING_PATH_URL = "/ping"
 SNAPSHOT_PATH_URL = "/depth"
 SERVER_TIME_PATH_URL = "/time"
 
+MARKETS_URL = "/markets"
 SERVER_MARKETS_PATH_URL = "v1/markets"
+
+ORDER_BOOK_URL = "/order_book/{}"
+ORDER_BOOK_URL_LIMIT_ID = 'order_book'
 
 # Private API endpoints or BinanceClient function
 ACCOUNTS_PATH_URL = "/account"
