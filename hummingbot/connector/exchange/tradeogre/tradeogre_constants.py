@@ -1,3 +1,10 @@
+from hummingbot.core.api_throttler.data_types import RateLimit, LinkedLimitWeightPair
+TRADEOGRE_RATE_LIMITS = [
+    RateLimit(limit_id="All", limit=5, time_interval=1),  # Max 5 requests per second globally
+]
+
+
+
 from hummingbot.core.api_throttler.data_types import LinkedLimitWeightPair, RateLimit
 from hummingbot.core.data_type.in_flight_order import OrderState
 
@@ -7,10 +14,12 @@ HBOT_ORDER_ID_PREFIX = "x-MG43PCSN"
 MAX_ORDER_ID_LEN = 32
 
 # Base URL
-REST_URL = "https://api.tradeogre.{}/api/"
+# REST_URL = "https://api.tradeogre.{}/api/"
+REST_URL = "https://tradeogre.{}/api/"
 WSS_URL = "wss://stream.tradeogre.{}:9443/ws"
 
-PUBLIC_API_VERSION = "v3"
+# PUBLIC_API_VERSION = "v3"
+PUBLIC_API_VERSION = "v1"
 PRIVATE_API_VERSION = "v3"
 
 MARKETS_URL = "/markets"
@@ -23,6 +32,8 @@ EXCHANGE_INFO_PATH_URL = "/exchangeInfo"
 PING_PATH_URL = "/ping"
 SNAPSHOT_PATH_URL = "/depth"
 SERVER_TIME_PATH_URL = "/time"
+
+SERVER_MARKETS_PATH_URL = "v1/markets"
 
 # Private API endpoints or BinanceClient function
 ACCOUNTS_PATH_URL = "/account"
@@ -112,7 +123,10 @@ RATE_LIMITS = [
               linked_limits=[LinkedLimitWeightPair(REQUEST_WEIGHT, 4),
                              LinkedLimitWeightPair(ORDERS, 1),
                              LinkedLimitWeightPair(ORDERS_24HR, 1),
-                             LinkedLimitWeightPair(RAW_REQUESTS, 1)])
+                             LinkedLimitWeightPair(RAW_REQUESTS, 1)]),
+    RateLimit(limit_id=SERVER_MARKETS_PATH_URL, limit=MAX_REQUEST, time_interval=ONE_MINUTE,
+              linked_limits=[LinkedLimitWeightPair(REQUEST_WEIGHT, 1),
+                             LinkedLimitWeightPair(RAW_REQUESTS, 1)]),
 ]
 
 ORDER_NOT_EXIST_ERROR_CODE = -2013

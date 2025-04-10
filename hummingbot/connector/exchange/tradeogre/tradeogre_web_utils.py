@@ -1,4 +1,9 @@
-from typing import Callable, Optional
+from hummingbot.core.api_throttler.async_throttler import AsyncThrottler
+from .tradeogre_constants import TRADEOGRE_RATE_LIMITS
+
+
+
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, Callable
 from hummingbot.connector.time_synchronizer import TimeSynchronizer
 from hummingbot.connector.utils import TimeSynchronizerRESTPreProcessor
 from hummingbot.core.api_throttler.async_throttler import AsyncThrottler
@@ -6,31 +11,63 @@ from hummingbot.core.web_assistant.auth import AuthBase
 from hummingbot.core.web_assistant.connections.data_types import RESTMethod
 from hummingbot.core.web_assistant.web_assistants_factory import WebAssistantsFactory
 from hummingbot.connector.exchange_py_base import ExchangePyBase
+from hummingbot.connector.exchange.tradeogre.tradeogre_constants import MARKETS_URL
 
 import hummingbot.connector.exchange.tradeogre.tradeogre_constants as CONSTANTS
 
+if TYPE_CHECKING:
+    from hummingbot.client.config.config_helpers import ClientConfigAdapter
 
-async def api_request(method: str, path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN, **kwargs):
-    """
-    Sends an HTTP request to the TradeOgre API
-    :param method: HTTP method (GET, POST, etc.)
-    :param path_url: API endpoint path
-    :param domain: the domain to connect to
-    :return: JSON response from the API
-    """
+class TradeogreWebUtils:
+
+    # def __init__(self,
+    #              client_config_map: "ClientConfigAdapter",
+    #              ):
+    #     super().__init__(client_config_map)
+
+    async def api_request(method: str, path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN, **kwargs):
+        """
+        Sends an HTTP request to the TradeOgre API
+        :param method: HTTP method (GET, POST, etc.)
+        :param path_url: API endpoint path
+        :param domain: the domain to connect to
+        :return: JSON response from the API
+        """
+        throttler = create_throttler()
+        api_factory = build_api_factory_without_time_synchronizer_pre_processor(throttler=throttler)
+        rest_assistant = await api_factory.get_rest_assistant()
+        
+        url = public_rest_url(path_url=path_url, domain=domain)
+        
+        response = await rest_assistant.execute_request(
+            url=url,
+            method="GET",
+            throttler_limit_id=path_url,
+            **kwargs
+        )
+        
+        return response
+
+
+    # async def _get_last_traded_price(self):
+    #     url = public_rest_url(path_url=MARKETS_URL, domain=CONSTANTS.DEFAULT_DOMAIN)
+    #     resp_json = await self._api_request(
+    #         method=RESTMethod.GET,
+    #         path_url=CONSTANTS.TICKER_PRICE_CHANGE_PATH_URL,
+    #     )
+    #     return float(resp_json["lastPrice"])
+
+async def api_markets_infos() -> Union[str, Dict[str, Any]]:
     throttler = create_throttler()
     api_factory = build_api_factory_without_time_synchronizer_pre_processor(throttler=throttler)
     rest_assistant = await api_factory.get_rest_assistant()
-    
-    url = public_rest_url(path_url=path_url, domain=domain)
-    
+    rest_assistant._throttler
+    url = public_rest_url(path_url="/markets", domain=CONSTANTS.DEFAULT_DOMAIN)
     response = await rest_assistant.execute_request(
         url=url,
-        method=RESTMethod(method),
-        throttler_limit_id=path_url,
-        **kwargs
-    )
-    
+        method=RESTMethod.GET,
+        throttler_limit_id=CONSTANTS.SERVER_MARKETS_PATH_URL
+    )    
     return response
 
 def public_rest_url(path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN) -> str:
@@ -77,11 +114,6 @@ def build_api_factory(
 def build_api_factory_without_time_synchronizer_pre_processor(throttler: AsyncThrottler) -> WebAssistantsFactory:
     api_factory = WebAssistantsFactory(throttler=throttler)
     return api_factory
-
-
-def create_throttler() -> AsyncThrottler:
-    return AsyncThrottler(CONSTANTS.RATE_LIMITS)
-
 
 async def get_current_server_time(
         throttler: Optional[AsyncThrottler] = None,
