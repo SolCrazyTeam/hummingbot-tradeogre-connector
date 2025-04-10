@@ -13,8 +13,6 @@ WSS_URL = "wss://stream.tradeogre.{}:9443/ws"
 PUBLIC_API_VERSION = "v3"
 PRIVATE_API_VERSION = "v3"
 
-MARKETS_URL = "/markets"
-
 # Public API endpoints or TradeogreClient function
 TICKER_PRICE_CHANGE_PATH_URL = "/ticker/24hr"
 TICKER_BOOK_PATH_URL = "/ticker/bookTicker"
