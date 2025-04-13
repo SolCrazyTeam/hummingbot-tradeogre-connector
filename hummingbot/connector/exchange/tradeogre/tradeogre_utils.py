@@ -1,3 +1,4 @@
+import time
 from decimal import Decimal
 from typing import Any, Dict
 
@@ -6,40 +7,33 @@ from pydantic import Field, SecretStr
 from hummingbot.client.config.config_data_types import BaseConnectorConfigMap, ClientFieldData
 from hummingbot.core.data_type.trade_fee import TradeFeeSchema
 
-CENTRALIZED = True
-EXAMPLE_PAIR = "BTC-USDT"
-
 DEFAULT_FEES = TradeFeeSchema(
-    maker_percent_fee_decimal=Decimal("0.002"),
-    taker_percent_fee_decimal=Decimal("0.002"),
-    buy_percent_fee_deducted_from_returns=True,
+    maker_percent_fee_decimal=Decimal("0.001"),
+    taker_percent_fee_decimal=Decimal("0.001"),
 )
 
+CENTRALIZED = True
 
-def is_exchange_information_valid(exchange_info: Dict[str, Any]) -> bool:
+EXAMPLE_PAIR = "BTC-USDT"
+
+
+def is_pair_information_valid(pair_info: Dict[str, Any]) -> bool:
     """
-    Verifies if a trading pair is enabled to operate with based on its exchange information
-    :param exchange_info: the exchange information for a trading pair
+    Verifies if a trading pair is enabled to operate with based on its market information
+
+    :param pair_info: the market information for a trading pair
+
     :return: True if the trading pair is enabled, False otherwise
     """
-    is_spot = False
-    is_trading = False
+    return pair_info.get("statusCode") == "Normal"
 
-    if exchange_info.get("status", None) == "TRADING":
-        is_trading = True
 
-    permissions_sets = exchange_info.get("permissionSets", list())
-    for permission_set in permissions_sets:
-        # PermissionSet is a list, find if in this list we have "SPOT" value or not
-        if "SPOT" in permission_set:
-            is_spot = True
-            break
-
-    return is_trading and is_spot
+def get_ms_timestamp() -> int:
+    return int(_time() * 1e3)
 
 
 class TradeogreConfigMap(BaseConnectorConfigMap):
-    connector: str = Field(default="tradeogre", const=True, client_data=None)
+    connector: str = Field(default="tradeogre", client_data=None)
     tradeogre_api_key: SecretStr = Field(
         default=...,
         client_data=ClientFieldData(
@@ -49,10 +43,19 @@ class TradeogreConfigMap(BaseConnectorConfigMap):
             prompt_on_new=True,
         ),
     )
-    tradeogre_api_secret: SecretStr = Field(
+    tradeogre_secret_key: SecretStr = Field(
         default=...,
         client_data=ClientFieldData(
-            prompt=lambda cm: "Enter your Tradeogre API secret",
+            prompt=lambda cm: "Enter your Tradeogre secret key",
+            is_secure=True,
+            is_connect_key=True,
+            prompt_on_new=True,
+        ),
+    )
+    tradeogre_group_id: SecretStr = Field(
+        default=...,
+        client_data=ClientFieldData(
+            prompt=lambda cm: "Enter your Tradeogre group Id",
             is_secure=True,
             is_connect_key=True,
             prompt_on_new=True,
@@ -65,35 +68,10 @@ class TradeogreConfigMap(BaseConnectorConfigMap):
 
 KEYS = TradeogreConfigMap.construct()
 
-# OTHER_DOMAINS = ["tradeogre_us"]
-# OTHER_DOMAINS_PARAMETER = {"tradeogre_us": "us"}
-# OTHER_DOMAINS_EXAMPLE_PAIR = {"tradeogre_us": "BTC-USDT"}
-# OTHER_DOMAINS_DEFAULT_FEES = {"tradeogre_us": DEFAULT_FEES}
 
-
-# class TradeogreUSConfigMap(BaseConnectorConfigMap):
-#     connector: str = Field(default="tradeogre_us", const=True, client_data=None)
-#     tradeogre_api_key: SecretStr = Field(
-#         default=...,
-#         client_data=ClientFieldData(
-#             prompt=lambda cm: "Enter your Tradeogre US API key",
-#             is_secure=True,
-#             is_connect_key=True,
-#             prompt_on_new=True,
-#         ),
-#     )
-#     tradeogre_api_secret: SecretStr = Field(
-#         default=...,
-#         client_data=ClientFieldData(
-#             prompt=lambda cm: "Enter your Tradeogre US API secret",
-#             is_secure=True,
-#             is_connect_key=True,
-#             prompt_on_new=True,
-#         ),
-#     )
-
-#     class Config:
-#         title = "tradeogre_us"
-
-
-# OTHER_DOMAINS_KEYS = {"tradeogre_us": TradeogreUSConfigMap.construct()}
+def _time():
+    """
+    Private function created just to have a method that can be safely patched during unit tests and make tests
+    independent from real time
+    """
+    return time.time()
