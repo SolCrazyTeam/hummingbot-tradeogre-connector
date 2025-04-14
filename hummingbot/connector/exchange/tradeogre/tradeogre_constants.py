@@ -20,16 +20,16 @@ WS_URL = "wss://tradeogre.com:8443"
 PRIVATE_WS_URL = "wss://tradeogre.com:8443"
 
 # REST API ENDPOINTS
-ORDER_PATH_URL = "/order"
-ORDER_STATUS_PATH_URL = "/account/order"
-BALANCE_PATH_URL = "/account/balances"
+ORDER_PATH_URL = "order"
+ORDER_STATUS_PATH_URL = "account/order"
+BALANCE_PATH_URL = "account/balances"
 
 
-BALANCE_HISTORY_PATH_URL = "/account/orders"
-TICKER_PATH_URL = "/ticker"
-PRODUCTS_PATH_URL = "/markets"
-DEPTH_PATH_URL = "/orders"
-SERVER_LIMIT_INFO = "/markets"
+BALANCE_HISTORY_PATH_URL = "account/orders"
+TICKER_PATH_URL = "ticker"
+PRODUCTS_PATH_URL = "markets"
+DEPTH_PATH_URL = "orders"
+SERVER_LIMIT_INFO = "markets"
 
 # WS API ENDPOINTS
 SUB_ENDPOINT_NAME = "sub"

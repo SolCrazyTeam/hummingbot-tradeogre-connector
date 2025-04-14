@@ -208,10 +208,13 @@ class TradeogreExchange(ExchangePyBase):
 
     def _initialize_trading_pair_symbols_from_exchange_info(self, exchange_info: Dict[str, Any]):
         mapping = bidict()
-        for symbol_data in filter(utils.is_pair_information_valid, exchange_info.get("data", [])):
-            if len(symbol_data["symbol"].split("/")) == 2:
-                base, quote = symbol_data["symbol"].split("/")
-                mapping[symbol_data["symbol"]] = combine_to_hb_trading_pair(base, quote)
+        #self.logger().error(f"_initialize_trading_pair_symbols_from_exchange_info exchange_info={exchange_info}")
+        for pair in exchange_info:
+            #self.logger().error(f"pair={pair}")
+            for key, value in pair.items():
+                if len(key.split("-")) == 2:
+                    base, quote = key.split("-")
+                    mapping[key] = combine_to_hb_trading_pair(base, quote)
         self._set_trading_pair_symbol_map(mapping)
 
     async def _place_order(

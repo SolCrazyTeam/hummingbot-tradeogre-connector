@@ -2,6 +2,8 @@ import hashlib
 import hmac
 import time
 import base64
+import logging
+
 from typing import Any, Dict
 
 from hummingbot.connector.exchange.tradeogre import tradeogre_constants as CONSTANTS
@@ -56,10 +58,10 @@ class TradeogreAuth(AuthBase):
         :param data: data to be included in the headers
         :return: a dictionary of request info including the request signature
         """
-
+        logging.getLogger().error(f"key={self.api_key},{self.secret_key}")
         signature = convert_to_base64(f"{self.api_key}:{self.secret_key}")
         token = f"Basic {signature}"
-
+        logging.getLogger().error(f"token={token}")
         return {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": token,
